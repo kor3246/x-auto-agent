@@ -1,0 +1,52 @@
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id          String   @id @default(cuid())
+  username    String
+  displayName String
+  niche       String
+  persona     String
+  tone        String
+
+  createdAt DateTime @default(now())
+
+  posts Post[]
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  content   String
+
+  // draft
+  // scheduled
+  // posted
+  status    String   @default("draft")
+
+  scheduledAt DateTime?
+  postedAt    DateTime?
+
+  accountId String
+
+  account Account @relation(
+    fields: [accountId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt DateTime @default(now())
+}
+
+
+model Idea {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+}
+```
