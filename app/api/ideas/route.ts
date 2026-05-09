@@ -1,26 +1,14 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
-export async function GET() {
-  const ideas =
-    await prisma.idea.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+const globalForPrisma =
+  globalThis as unknown as {
+    prisma: PrismaClient | undefined;
+  };
 
-  return NextResponse.json(ideas);
-}
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient();
 
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  const idea =
-    await prisma.idea.create({
-      data: {
-        content: body.content,
-      },
-    });
-
-  return NextResponse.json(idea);
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
 }

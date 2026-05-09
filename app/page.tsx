@@ -72,14 +72,32 @@ export default function Home() {
   }
 
   async function loadIdeas() {
-    const res = await fetch(
-      "/api/ideas"
-    );
+  try {
+    const res = await fetch("/api/ideas");
 
-    const data = await res.json();
+    if (!res.ok) {
+      console.error(
+        "ideas api error",
+        res.status
+      );
+      return;
+    }
+
+    const text = await res.text();
+
+    if (!text) {
+      setIdeas([]);
+      return;
+    }
+
+    const data = JSON.parse(text);
 
     setIdeas(data);
+  } catch (error) {
+    console.error(error);
+    setIdeas([]);
   }
+}
 
   async function createAccount() {
     setLoading(true);
