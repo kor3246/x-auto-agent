@@ -6,11 +6,11 @@ export async function GET() {
   try {
     const posts = await prisma.post.findMany({
       where: {
-        status: "scheduled",
-        scheduledAt: {
-          lte: new Date(),
-        },
-      },
+  status: "scheduled",
+  scheduledAt: {
+    lte: new Date(),
+  },
+},
       include: {
         account: true,
       },
