@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Account {
   id          String   @id @default(cuid())
   username    String
@@ -22,31 +21,23 @@ model Account {
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  content   String
-
-  // draft
-  // scheduled
-  // posted
-  status    String   @default("draft")
+  id          String   @id @default(cuid())
+  content     String
+  status      String   @default("draft")
 
   scheduledAt DateTime?
   postedAt    DateTime?
 
   accountId String
 
-  account Account @relation(
-    fields: [accountId],
-    references: [id],
-    onDelete: Cascade
-  )
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }
-
 
 model Idea {
   id        String   @id @default(cuid())
   content   String
   createdAt DateTime @default(now())
 }
+
