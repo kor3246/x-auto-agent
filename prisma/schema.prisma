@@ -1,11 +1,12 @@
-```prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
 
 model Account {
   id          String   @id @default(cuid())
@@ -49,4 +50,3 @@ model Idea {
   content   String
   createdAt DateTime @default(now())
 }
-```
