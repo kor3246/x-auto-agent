@@ -2,34 +2,24 @@ import { prisma } from "@/lib/prisma";
 import { TwitterApi } from "twitter-api-v2";
 import { NextResponse } from "next/server";
 
-const client = new TwitterApi({
-  appKey: process.env.X_API_KEY!,
-  appSecret: process.env.X_API_SECRET!,
-  accessToken: process.env.X_ACCESS_TOKEN!,
-  accessSecret:
-    process.env.X_ACCESS_SECRET!,
-});
-
 export async function POST(req: Request) {
   try {
-    console.log("POST START");
-
     const body = await req.json();
 
-    console.log(body);
-
-    const post = await prisma.post.findUnique({
-      where: {
-        id: body.postId,
-      },
-    });
-
-    console.log(post);
+    const post =
+      await prisma.post.findUnique({
+        where: {
+          id: body.postId,
+        },
+        include: {
+          account: true,
+        },
+      });
 
     if (!post) {
       return NextResponse.json(
         {
-          error: "post not found",
+          error: "Post not found",
         },
         {
           status: 404,
@@ -37,24 +27,61 @@ export async function POST(req: Request) {
       );
     }
 
-    // X投稿
-    const tweet =
-      await client.v2.tweet(post.content);
+    console.log(post.account);
 
-    console.log(tweet);
+    if (
+      !post.account.xApiKey ||
+      !post.account.xApiSecret ||
+      !post.account.xAccessToken ||
+      !post.account.xAccessSecret
+    ) {
+      return NextResponse.json(
+        {
+          error: "X認証情報未設定",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-    // 投稿済み更新
-    await prisma.post.update({
-      where: {
-        id: post.id,
-      },
-      data: {
-        status: "posted",
-      },
-    });
+    const client = new TwitterApi({
+      appKey:
+        post.account.xApiKey,
+
+      appSecret:
+        post.account.xApiSecret,
+
+      accessToken:
+        post.account.xAccessToken,
+
+      accessSecret:
+        post.account.xAccessSecret,
+    }).readWrite;
+
+    const me =
+      await client.v2.me();
+
+    console.log(me);
+
+    await client.v2.tweet(
+      post.content
+    );
+
+    const updated =
+      await prisma.post.update({
+        where: {
+          id: post.id,
+        },
+        data: {
+          status: "posted",
+          postedAt: new Date(),
+        },
+      });
 
     return NextResponse.json({
       success: true,
+      post: updated,
     });
   } catch (error: any) {
     console.error(error);
@@ -62,9 +89,8 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          error?.data?.detail ||
           error?.message ||
-          JSON.stringify(error),
+          "投稿失敗",
       },
       {
         status: 500,

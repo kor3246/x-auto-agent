@@ -2,27 +2,86 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const accounts = await prisma.account.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  try {
+    const accounts =
+      await prisma.account.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
-  return NextResponse.json(accounts);
+    return NextResponse.json(
+      accounts
+    );
+  } catch (error: any) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          error?.message ||
+          "取得失敗",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
-export async function POST(req: Request) {
-  const body = await req.json();
+export async function POST(
+  req: Request
+) {
+  try {
+    const body = await req.json();
 
-  const account = await prisma.account.create({
-    data: {
-      username: body.username,
-      displayName: body.displayName,
-      niche: body.niche,
-      persona: body.persona,
-      tone: body.tone,
-    },
-  });
+    const account =
+      await prisma.account.create({
+        data: {
+          username:
+            body.username,
 
-  return NextResponse.json(account);
+          displayName:
+            body.displayName,
+
+          niche:
+            body.niche,
+
+          persona:
+            body.persona,
+
+          tone:
+            body.tone,
+
+          xApiKey:
+            body.xApiKey,
+
+          xApiSecret:
+            body.xApiSecret,
+
+          xAccessToken:
+            body.xAccessToken,
+
+          xAccessSecret:
+            body.xAccessSecret,
+        },
+      });
+
+    return NextResponse.json(
+      account
+    );
+  } catch (error: any) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          error?.message ||
+          "保存失敗",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

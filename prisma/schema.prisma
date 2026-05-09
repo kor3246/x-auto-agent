@@ -9,11 +9,18 @@ datasource db {
 
 model Account {
   id          String   @id @default(cuid())
+
   username    String
   displayName String
   niche       String
   persona     String
   tone        String
+
+  xApiKey       String
+  xApiSecret    String
+
+  xAccessToken  String
+  xAccessSecret String
 
   createdAt DateTime @default(now())
 
@@ -21,12 +28,14 @@ model Account {
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  content     String
-  status      String   @default("draft")
+  id String @id @default(cuid())
+
+  content String
+
+  status String @default("draft")
 
   scheduledAt DateTime?
-  postedAt    DateTime?
+  postedAt DateTime?
 
   accountId String
 
@@ -36,8 +45,9 @@ model Post {
 }
 
 model Idea {
-  id        String   @id @default(cuid())
-  content   String
+  id String @id @default(cuid())
+
+  content String
+
   createdAt DateTime @default(now())
 }
-

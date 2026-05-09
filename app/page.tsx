@@ -37,13 +37,19 @@ export default function Home() {
   const [editingContent, setEditingContent] =
     useState("");
 
-  const [form, setForm] = useState({
-    username: "",
-    displayName: "",
-    niche: "",
-    persona: "",
-    tone: "",
-  });
+ const [form, setForm] = useState({
+  username: "",
+  displayName: "",
+  niche: "",
+  persona: "",
+  tone: "",
+
+  xApiKey: "",
+  xApiSecret: "",
+
+  xAccessToken: "",
+  xAccessSecret: "",
+});
 
   useEffect(() => {
     loadAccounts();
@@ -111,14 +117,19 @@ export default function Home() {
       body: JSON.stringify(form),
     });
 
-    setForm({
-      username: "",
-      displayName: "",
-      niche: "",
-      persona: "",
-      tone: "",
-    });
+  setForm({
+  username: "",
+  displayName: "",
+  niche: "",
+  persona: "",
+  tone: "",
 
+  xApiKey: "",
+  xApiSecret: "",
+
+  xAccessToken: "",
+  xAccessSecret: "",
+});
     await loadAccounts();
 
     setLoading(false);
@@ -547,17 +558,65 @@ export default function Home() {
               />
 
               <textarea
-                className="w-full border rounded-xl p-4 text-black min-h-[120px]"
-                placeholder="文体"
-                value={form.tone}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    tone:
-                      e.target.value,
-                  })
-                }
-              />
+  className="w-full border rounded-xl p-4 text-black min-h-[120px]"
+  placeholder="文体"
+  value={form.tone}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      tone: e.target.value,
+    })
+  }
+/>
+
+<input
+  className="w-full border rounded-xl p-4 text-black"
+  placeholder="X API Key"
+  value={form.xApiKey}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      xApiKey: e.target.value,
+    })
+  }
+/>
+
+<input
+  className="w-full border rounded-xl p-4 text-black"
+  placeholder="X API Secret"
+  value={form.xApiSecret}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      xApiSecret: e.target.value,
+    })
+  }
+/>
+
+<input
+  className="w-full border rounded-xl p-4 text-black"
+  placeholder="X Access Token"
+  value={form.xAccessToken}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      xAccessToken: e.target.value,
+    })
+  }
+/>
+
+
+<input
+  className="w-full border rounded-xl p-4 text-black"
+  placeholder="X Access Secret"
+  value={form.xAccessSecret}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      xAccessSecret: e.target.value,
+    })
+  }
+/>
 
               <button
                 onClick={createAccount}
