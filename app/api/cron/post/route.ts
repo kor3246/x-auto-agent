@@ -1,44 +1,32 @@
+import type {
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+
 import { prisma } from "@/lib/prisma";
+
 import { TwitterApi } from "twitter-api-v2";
-import { NextResponse } from "next/server";
 
-export const dynamic =
-  "force-dynamic";
-
-  export const runtime = "nodejs";
-
-  export const revalidate = 0;
-
-export async function GET() {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
-    const posts = await prisma.post.findMany({
-      where: {
-        status: "scheduled",
-        scheduledAt: {
-          lte: new Date(),
+    const posts =
+      await prisma.post.findMany({
+        where: {
+          status: "scheduled",
+          scheduledAt: {
+            lte: new Date(),
+          },
         },
-      },
-      include: {
-        account: true,
-      },
-    });
-
-    console.log("SCHEDULED POSTS");
-    console.log(posts);
+        include: {
+          account: true,
+        },
+      });
 
     for (const post of posts) {
       try {
-        console.log("CRON POST");
-
-        console.log({
-          postId: post.id,
-          username:
-            post.account.username,
-          token:
-            post.account
-              .xAccessToken,
-        });
-
         if (
           !post.account.xApiKey ||
           !post.account.xApiSecret ||
@@ -48,28 +36,22 @@ export async function GET() {
           continue;
         }
 
-        const client = new TwitterApi({
-          appKey:
-            post.account.xApiKey,
+        const client =
+          new TwitterApi({
+            appKey:
+              post.account.xApiKey,
 
-          appSecret:
-            post.account.xApiSecret,
+            appSecret:
+              post.account.xApiSecret,
 
-          accessToken:
-            post.account
-              .xAccessToken,
+            accessToken:
+              post.account
+                .xAccessToken,
 
-          accessSecret:
-            post.account
-              .xAccessSecret,
-        }).readWrite;
-
-        const me =
-          await client.v2.me();
-
-        console.log("ME");
-
-        console.log(me);
+            accessSecret:
+              post.account
+                .xAccessSecret,
+          }).readWrite;
 
         await client.v2.tweet(
           post.content
@@ -85,28 +67,19 @@ export async function GET() {
           },
         });
       } catch (error) {
-        console.error(
-          "予約投稿失敗:",
-          post.id,
-          error
-        );
+        console.error(error);
       }
     }
 
-    return NextResponse.json({
+    return res.status(200).json({
       success: true,
       count: posts.length,
     });
   } catch (error: any) {
     console.error(error);
 
-    return NextResponse.json(
-      {
-        error: error.message,
-      },
-      {
-        status: 500,
-      }
-    );
+    return res.status(500).json({
+      error: error.message,
+    });
   }
 }
