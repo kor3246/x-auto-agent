@@ -16,7 +16,13 @@ export async function POST(req: Request) {
         },
         data: {
           scheduledAt: new Date(
-            body.scheduledAt
+            new Date(
+              body.scheduledAt
+            ).getTime() -
+              9 *
+                60 *
+                60 *
+                1000
           ),
           status: "scheduled",
         },

@@ -43,6 +43,7 @@ export default function Home() {
   niche: "",
   persona: "",
   tone: "",
+  patterns: "",
 
   xApiKey: "",
   xApiSecret: "",
@@ -58,16 +59,23 @@ export default function Home() {
   }, []);
 
   async function loadAccounts() {
-    const res = await fetch("/api/accounts");
+  const res = await fetch(
+    "/api/accounts"
+  );
 
-    const data = await res.json();
+  const data = await res.json();
 
-    setAccounts(data);
+  setAccounts(data);
 
-    if (data.length > 0) {
-      setSelectedAccountId(data[0].id);
-    }
+  if (
+    data.length > 0 &&
+    !selectedAccountId
+  ) {
+    setSelectedAccountId(
+      data[0].id
+    );
   }
+}
 
   async function loadPosts() {
     const res = await fetch("/api/posts");
@@ -123,6 +131,7 @@ export default function Home() {
   niche: "",
   persona: "",
   tone: "",
+  patterns: "",
 
   xApiKey: "",
   xApiSecret: "",
@@ -569,6 +578,18 @@ export default function Home() {
   }
 />
 
+<textarea
+  className="w-full border rounded-xl p-4 text-black min-h-[120px]"
+  placeholder="投稿パターン（カンマ区切り）"
+  value={form.patterns}
+  onChange={(e) =>
+    setForm({
+      ...form,
+      patterns: e.target.value,
+    })
+  }
+/>
+
 <input
   className="w-full border rounded-xl p-4 text-black"
   placeholder="X API Key"
@@ -659,11 +680,11 @@ export default function Home() {
               </div>
 
               <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                {ideas.map((idea) => (
-                  <div
-                    key={idea.id}
-                    className="bg-white border rounded-xl p-3 text-sm text-black"
-                  >
+               {ideas.map((idea) => (
+  <div
+    key={idea.id}
+    className="bg-white border rounded-xl p-3 text-sm text-black"
+  >
                     {idea.content}
                   </div>
                 ))}
@@ -674,11 +695,14 @@ export default function Home() {
               {accounts.map((account) => (
                 <div
                   key={account.id}
-                  onClick={() =>
-                    setSelectedAccountId(
-                      account.id
-                    )
-                  }
+                 onClick={() => {
+  setSelectedAccountId(
+    account.id
+  );
+
+  setLatestPostId("");
+  setGeneratedPost("");
+}}
                   className={`border rounded-xl p-4 flex justify-between items-center cursor-pointer ${
                     selectedAccountId ===
                     account.id

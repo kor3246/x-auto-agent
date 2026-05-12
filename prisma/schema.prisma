@@ -12,9 +12,12 @@ model Account {
 
   username    String
   displayName String
+
   niche       String
   persona     String
   tone        String
+
+  patterns    String?
 
   xApiKey       String
   xApiSecret    String

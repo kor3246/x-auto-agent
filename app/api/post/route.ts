@@ -27,7 +27,14 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log(post.account);
+    console.log("POST DATA");
+    console.log({
+      postId: post.id,
+      accountId: post.account.id,
+      username: post.account.username,
+      token:
+        post.account.xAccessToken,
+    });
 
     if (
       !post.account.xApiKey ||
@@ -61,6 +68,8 @@ export async function POST(req: Request) {
 
     const me =
       await client.v2.me();
+
+    console.log("ME");
 
     console.log(me);
 

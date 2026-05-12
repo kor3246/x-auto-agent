@@ -24,6 +24,7 @@ export async function GET() {
           !post.account.xAccessToken ||
           !post.account.xAccessSecret
         ) {
+          
           continue;
         }
 

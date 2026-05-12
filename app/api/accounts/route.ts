@@ -53,6 +53,8 @@ export async function POST(
           tone:
             body.tone,
 
+            patterns: body.patterns,
+
           xApiKey:
             body.xApiKey,
 
