@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 export const dynamic =
   "force-dynamic";
 
+  export const runtime = "nodejs";
+
 export async function GET() {
   try {
     const posts = await prisma.post.findMany({
