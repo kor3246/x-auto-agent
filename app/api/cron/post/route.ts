@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { TwitterApi } from "twitter-api-v2";
 import { NextResponse } from "next/server";
 
+export const dynamic =
+  "force-dynamic";
+
 export async function GET() {
   try {
     const posts = await prisma.post.findMany({
