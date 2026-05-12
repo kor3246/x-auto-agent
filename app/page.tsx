@@ -680,9 +680,9 @@ export default function Home() {
               </div>
 
               <div className="space-y-2 max-h-[200px] overflow-y-auto">
-               {ideas.map((idea) => (
+               {ideas.map((idea, index) => (
   <div
-    key={idea.id}
+    key={idea.id || index}
     className="bg-white border rounded-xl p-3 text-sm text-black"
   >
                     {idea.content}
