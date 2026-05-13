@@ -12,18 +12,25 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const posts =
-      await prisma.post.findMany({
-        where: {
-          status: "scheduled",
-          scheduledAt: {
-            lte: new Date(),
-          },
-        },
-        include: {
-          account: true,
-        },
-      });
+    const now = new Date();
+
+const posts =
+  await prisma.post.findMany({
+    where: {
+      status: "scheduled",
+      scheduledAt: {
+        lte: new Date(
+          now.getTime() +
+            10 *
+              60 *
+              1000
+        ),
+      },
+    },
+    include: {
+      account: true,
+    },
+  });
 
     for (const post of posts) {
       try {
