@@ -53,6 +53,13 @@ export default async function handler(
                 .xAccessSecret,
           }).readWrite;
 
+          const me =
+  await client.v2.me();
+
+console.log("ME");
+
+console.log(me);
+
         await client.v2.tweet(
           post.content
         );
